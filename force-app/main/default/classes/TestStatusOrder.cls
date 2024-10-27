@@ -48,9 +48,10 @@ private class TestStatusOrder {
 
         // Vérification des articles de commande associés
         List<OrderItem> orderItems = [SELECT Id, Quantity, UnitPrice FROM OrderItem WHERE OrderId = :testOrder.Id];
-        System.assertEquals(1, orderItems.size(), 'Il doit y avoir un article de commande associé.');
-        System.assertEquals(10, orderItems[0].Quantity, 'La quantité de l\'article de commande doit être 10.');
-        System.assertEquals(150, orderItems[0].UnitPrice, 'Le prix unitaire de l\'article de commande doit être 150.');
+        System.assertEquals(1, orderItems.size(), '1 article de commande associé.');
+        System.assertEquals(10, orderItems[0].Quantity, 'La quantité de l\'article de commande est 10.');
+        System.assertEquals(150, orderItems[0].UnitPrice, 'Le prix unitaire de l\'article de commande est 150.');
     }
+
 
 }
