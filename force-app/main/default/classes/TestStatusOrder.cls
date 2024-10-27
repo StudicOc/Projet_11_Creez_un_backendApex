@@ -2,21 +2,26 @@
 private class TestStatusOrder {
 
     @isTest
-    static void displayMessageErrorToOrder() {
-  
-        Account firstAccount = TestDataFactory.createAccount('Account 1');
-        Order testOrder = TestDataFactory.createOrder(firstAccount.Id);
-        testOrder.Status = 'Activated'; 
+    static void orderWithoutOrdItem() {
+        // Création des données de test
+        Account accountClient = TestDataFactory.createAccount('Account 1');
+        Order orderWithoutProduct = TestDataFactory.createOrder(accountClient.Id);
+        
+        // Mettre à jour le statut de l'ordre pour qu'il soit 'Activated'
+        orderWithoutProduct.Status = 'Activated';
+    
+        List<Order> orders = new List<Order>{orderWithoutProduct};
 
-        Test.startTest(); 
-        OrderService.updateStatusOrder(new List<Order>{testOrder}); 
+        Test.startTest();
+        
+        // Appel de la méthode updateStatusOrder
+        OrderService.updateStatusOrder(orders);
+
         Test.stopTest();
 
-        // Vérification de son état après la mise à jour
-        List<Order> updatedOrders = [SELECT Id, Status FROM Order WHERE Id = :testOrder.Id];
-
-        // Vérifier que l'ordre a toujours le statut 'Draft' 
-        System.assertEquals('Draft', updatedOrders[0].Status, 'L\'utilisateur ne peut pas passer le statut de l\'ordre en « Actif » sauf si l\'ordre a des produits associés.');
-
+        // Vérification que l'erreur est ajoutée directement sur la page ORDER
+        System.assert(orderWithoutProduct.getErrors().size() > 0, 'Une erreur devrait être associée à l\'ordre car aucun produit n\'est lié.');
+        System.assert(orderWithoutProduct.getErrors()[0].getMessage().contains('L\'utilisateur ne peut pas passer le statut de l\'ordre en « Actif » sauf si l\'ordre a des produits associés.'), 
+                      'Le message d\'erreur devrait indiquer que l\'utilisateur ne peut pas passer le statut.');
     }
 }
