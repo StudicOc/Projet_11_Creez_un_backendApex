@@ -55,6 +55,16 @@ public with sharing class TestDataFactory {
         System.debug('Order ID: ' + testOrder.Id);
         return testOrder;
     }
+
+     public static Order createOrder2(Id accountId, String status) {
+        Order ord = new Order(
+            AccountId = accountId,
+            Status = status,
+            EffectiveDate = Date.today()
+        );
+        insert ord;
+        return ord;
+    }
     // Méthode pour créer un produit
     public static Product2 createProduct2(String name) {
         Product2 prod = new Product2(

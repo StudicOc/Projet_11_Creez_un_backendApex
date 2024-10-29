@@ -6,6 +6,7 @@
         <members>AccountTaskScheduler</members>
         <members>TestStatusOrder</members>
         <members>TestDeleteOrder</members>
+        <members>TestBatchAccounts</members>
         <members>TestDataFactory</members>
         <name>ApexClass</name>
     </types>

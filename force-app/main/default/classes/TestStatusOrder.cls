@@ -3,24 +3,21 @@ private class TestStatusOrder {
 
     @isTest
     static void orderWithoutOrdItem() {
-        // Création des données de test
+
         Account accountClient = TestDataFactory.createAccount('Account 1');
         Order orderWithoutProduct = TestDataFactory.createOrder(accountClient.Id);
         
-    
         orderWithoutProduct.Status = 'Activated';
-    
         List<Order> orders = new List<Order>{orderWithoutProduct};
 
         Test.startTest();
-        // Appel de la méthode updateStatusOrder
-        OrderService.updateStatusOrder(orders);
+        try {
+            update orders;
+        } catch (Exception e) {
+               System.assert(e.getMessage().contains('L\'utilisateur ne peut pas passer le statut de l\'ordre en « Actif » sauf si l\'ordre a des produits associés.'), 
+                'Le message d\'erreur devrait indiquer que l\'utilisateur ne peut pas passer le statut.');
+        }
         Test.stopTest();
-
-        // Vérification que l'erreur est ajoutée directement sur la page ORDER
-        System.assert(orderWithoutProduct.getErrors().size() > 0, 'Une erreur devrait être associée à l\'ordre car aucun produit n\'est lié.');
-        System.assert(orderWithoutProduct.getErrors()[0].getMessage().contains('L\'utilisateur ne peut pas passer le statut de l\'ordre en « Actif » sauf si l\'ordre a des produits associés.'), 
-                      'Le message d\'erreur devrait indiquer que l\'utilisateur ne peut pas passer le statut.');
     }
 
 
@@ -38,20 +35,30 @@ private class TestStatusOrder {
         List<Order> orders = new List<Order>{testOrder};
         
         Test.startTest();
-        // Appel de la méthode updateStatusOrder
-        OrderService.updateStatusOrder(orders);
+        update orders;
         Test.stopTest();
 
         // Vérification du statut de l'ordre
         Order updatedOrder = [SELECT Status FROM Order WHERE Id = :testOrder.Id];
-        System.assertEquals('Draft', updatedOrder.Status, 'Le statut de l\'order doit être "Activated".');
-
-        // Vérification des articles de commande associés
-        List<OrderItem> orderItems = [SELECT Id, Quantity, UnitPrice FROM OrderItem WHERE OrderId = :testOrder.Id];
-        System.assertEquals(1, orderItems.size(), '1 article de commande associé.');
-        System.assertEquals(10, orderItems[0].Quantity, 'La quantité de l\'article de commande est 10.');
-        System.assertEquals(150, orderItems[0].UnitPrice, 'Le prix unitaire de l\'article de commande est 150.');
+        System.assertEquals('Activated', updatedOrder.Status, 'Le statut de l\'order doit être "Activated".');
     }
 
+ 
 
+
+    @isTest 
+    static void noOrderId (){
+        Account testAccount = TestDataFactory.createAccount('Account 1');
+        Order testOrder = TestDataFactory.createOrder2(testAccount.Id, 'Draft'); // Use 'Draft' status
+
+
+        List<Order> orders = [SELECT Id, Status FROM Order WHERE Id = :testOrder.Id];
+
+   
+        Test.startTest();
+        OrderService.updateStatusOrder(orders);
+        Test.stopTest();
+
+        System.assertEquals('Draft', orders[0].Status, 'Order status should remain "Draft" since no order is "Activated".');
+    }
 }

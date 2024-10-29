@@ -21,8 +21,6 @@ private class TestDeleteOrder {
 
         Test.startTest();
         delete ordersToDelete;
-        // Appeler le service après suppression des commandes
-        OrderService.afterDeleteOrder(ordersToDelete);
         Test.stopTest();
 
         // Vérification du field IsActive__c 
