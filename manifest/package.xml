@@ -7,6 +7,7 @@
         <members>TestStatusOrder</members>
         <members>TestDeleteOrder</members>
         <members>TestBatchAccounts</members>
+        <members>TestSchedulerJob</members>
         <members>TestDataFactory</members>
         <name>ApexClass</name>
     </types>
