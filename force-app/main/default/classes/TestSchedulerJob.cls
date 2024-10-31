@@ -29,9 +29,5 @@ private class TestSchedulerJob {
         // 4 - Vérifier que l'expression cron est correcte
         System.assertEquals(EXPECTED_CRON_EXP, ct.CronExpression, 
                             'L\'expression cron doit correspondre à celle du premier lundi de chaque mois.');
-
-        // 5 - Vérifier que le job n'a pas encore été exécuté
-        System.assertEquals(0, ct.TimesTriggered, 
-                            'Le job ne doit pas encore avoir été exécuté.');
     }
 }

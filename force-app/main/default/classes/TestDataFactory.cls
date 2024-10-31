@@ -44,6 +44,23 @@ public with sharing class TestDataFactory {
         insert ord;
         return ord;
     }
+
+     //Méthode specifique pour le batch 
+/*
+     public static Order createOrder2(Id accountId) {
+        Order testOrder = new Order(
+            Name = 'Test Order',
+            AccountId = accountId,
+            Status = 'Draft',
+            Pricebook2Id = Test.getStandardPricebookId(),
+            EffectiveDate = Date.today()
+        );
+        insert testOrder;
+        System.debug('Order ID: ' + testOrder.Id);
+        return testOrder;
+    }
+        */
+
     // Méthode pour créer un produit
     public static Product2 createProduct2(String name) {
         Product2 prod = new Product2(
@@ -67,22 +84,6 @@ public with sharing class TestDataFactory {
         return pbooke;
     }
 
-
-
-    //Méthode specifique pour le batch 
-
-      public static Order createOrder2(Id accountId) {
-        Order testOrder = new Order(
-            Name = 'Test Order',
-            AccountId = accountId,
-            Status = 'Draft',
-            Pricebook2Id = Test.getStandardPricebookId(),
-            EffectiveDate = Date.today()
-        );
-        insert testOrder;
-        System.debug('Order ID: ' + testOrder.Id);
-        return testOrder;
-    }
 
     // Méthode pour créer un article de commande
     public static OrderItem createOrderItem(Id orderId, Id pricebookEntryId, Integer quantity, Decimal unitPrice) {
