@@ -1,40 +1,37 @@
 /**
- * This class contains unit tests for validating the behavior of Apex classes
- * and triggers.
- *
- * Unit tests are class methods that verify whether a particular piece
- * of code is working properly. Unit test methods take no arguments,
- * commit no data to the database, and are flagged with the testMethod
- * keyword in the method definition.
- *
- * All test methods in an org are executed whenever Apex code is deployed
- * to a production org to confirm correctness, ensure code
- * coverage, and prevent regressions. All Apex classes are
- * required to have at least 75% code coverage in order to be deployed
- * to a production org. In addition, all triggers must have some code coverage.
- * 
- * The @isTest class annotation indicates this class only contains test
- * methods. Classes defined with the @isTest annotation do not count against
- * the org size limit for all Apex scripts.
- *
- * See the Apex Language Reference for more information about Testing and Code Coverage.
- */
+ * @description       : 
+ * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+ * @group             : 
+ * @last modified on  : 10-31-2024
+ * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+**/
 @isTest
 private class TestSchedulerJob {
+
+    // Expression cron attendue pour le premier lundi de chaque mois
+    private static final String EXPECTED_CRON_EXP = '0 0 0 ? * 2#1';
 
     @isTest
     static void testSchedulerExecution() {
       
+        // 1 - Création de données - Exemple avec Account
+        Account testAccount = TestDataFactory.createAccount('Account 1');
 
-        UpdateAccounts batchInstanceAccounts = new UpdateAccounts();
-        Database.executeBatch(batchInstanceAccounts); 
+        // 2 - Planifier le job en appelant la méthode de la classe à tester
+        AccountTaskScheduler.scheduleMonthlyJob();
 
-        Test.startTest();
-        String cronExp = '0 0 0 ? * 2#1'; 
-        String jobNae = 'MonthlyScheduledJob';
-        System.schedule(jobNae, cronExp, new AccountTaskScheduler());
-        Test.stopTest();
+        // 3 - Récupérer l'identifiant du job programmé
+        CronTrigger ct = [SELECT Id, CronExpression, TimesTriggered, NextFireTime
+                          FROM CronTrigger 
+                          WHERE CronExpression = :EXPECTED_CRON_EXP
+                          LIMIT 1];
 
-        System.assert(true, 'Le job planifié a été exécuté sans erreurs.');
+        // 4 - Vérifier que l'expression cron est correcte
+        System.assertEquals(EXPECTED_CRON_EXP, ct.CronExpression, 
+                            'L\'expression cron doit correspondre à celle du premier lundi de chaque mois.');
+
+        // 5 - Vérifier que le job n'a pas encore été exécuté
+        System.assertEquals(0, ct.TimesTriggered, 
+                            'Le job ne doit pas encore avoir été exécuté.');
     }
 }
